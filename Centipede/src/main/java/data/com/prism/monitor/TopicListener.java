@@ -53,7 +53,7 @@ public class TopicListener implements Runnable {
 			if (watchKey != null && currentTime - lastUpdate > ONE_SECONDS) {
 				synchronized (watchKey) {
 					if (watchKey != null) {
-						ExecutorBuilder.WatchKeyExecutor.getExecutor().enDefaultQueue(new WatchKeyHander(watchKey, rootPath));
+						ExecutorBuilder.WatchKeyExecutor.getExecutor().enDefaultQueue(new WatchKeyHandler(watchKey, rootPath));
 						lastUpdate = currentTime;
 					}
 				}

@@ -18,10 +18,7 @@ public abstract class AbstractFilePersistListener implements FilePersistListener
 
 	//
 	protected File cachePath = null;
-
-	// compose of base path and topic
-	private String rootPath = null;
-
+	protected String rootPath ;
 	public void clear() {
 
 		this.clear(rootPath);

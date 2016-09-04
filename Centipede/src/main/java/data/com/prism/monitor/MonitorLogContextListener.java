@@ -1,13 +1,9 @@
 package data.com.prism.monitor;
 
-import java.io.File;
 import java.io.IOException;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import org.apache.log4j.PropertyConfigurator;
-
 import data.com.prism.Log;
 import data.com.prism.bank.ShutDownHook;
 import data.com.prism.cluster.ClusterMgr;
@@ -18,15 +14,14 @@ import data.com.prism.util.StringUtil;
 
 public class MonitorLogContextListener implements ServletContextListener {
 	
-	private static final String logAnalyseConfig = "logAnalyseConfig";
-	
 	public void contextDestroyed(ServletContextEvent arg0) {
 	}
 
 	public void contextInitialized(ServletContextEvent context) {
-		String dataPath = context.getServletContext().getRealPath("/") + File.separator + "data" + File.separator;
 		//1、
-		ConfigMgr.init(context.getServletContext().getInitParameter(logAnalyseConfig),dataPath);
+		if(!ConfigMgr.init(context.getServletContext())){
+			throw new IllegalArgumentException("ConfigMgr.init() 初始化失败!请输入正确的参数");
+		}
 		
 		//2、
 		if(StringUtil.isEmpty(ConfigMgr.getMonitorDir())){

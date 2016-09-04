@@ -88,7 +88,7 @@ public class MappedBufferReadFile implements ReadFile {
 					if(messageBytes.length<=0){
 						return ;
 					}
-					String data = ConfigMgr.getDataPath();
+					String data = ConfigMgr.getWebDataPath();
 					String dataDirs = data + File.separator + topic;//each data file inside in the root path of subdir topic
 					String fName = FileUtil.getSimpleName(fileName);
 					File file = new File(dataDirs, System.currentTimeMillis()+"_"+fName);//add the current time of create file

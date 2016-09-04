@@ -1,9 +1,5 @@
 package data.com.prism.cluster;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
-
 import data.com.prism.mgr.ConfigMgr;
 
 public class ClusterMgr {
@@ -17,10 +13,7 @@ public class ClusterMgr {
 		CLUSTER_CONTINER = new ClusterContiner();
 		String master = ConfigMgr.getMaster();
 		CLUSTER_CONTINER.setMasterUrl(master);
-		String[] slaves = ConfigMgr.getSlaves();
-		Set<String> slavesSet = new TreeSet<String>();
-		slavesSet.addAll(Arrays.asList(slaves));
-		CLUSTER_CONTINER.setSalvesUrl(slavesSet);
+		CLUSTER_CONTINER.addSalveUrl(ConfigMgr.getSlave());
 		CLUSTER_CONTINER.setRole(ConfigMgr.getRole());
 	}
 

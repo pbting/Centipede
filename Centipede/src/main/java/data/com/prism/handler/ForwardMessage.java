@@ -41,7 +41,7 @@ public class ForwardMessage extends Action {
 			param.put("topic", topic);
 			param.put("filePath", filePath);
 			String response = HttpUtil.doPost(master, param,"utf-8");
-			if(null!=response&&HttpUtil.OK == Integer.parseInt(response)){
+			if(null!=response&&HttpUtil.OK == Short.parseShort(response)){
 				Log.info("["+ForwardMessage.class.getName()+"] 消息发送成功!");
 			}else if(null!=null&&HttpUtil.PARAM_ERROR_NO_ANALYSESOR == Integer.parseInt(response)){
 				Log.info("["+ForwardMessage.class.getName()+"] 发送参数错误。!"+filePath+" 没有响应的日志解析器。");

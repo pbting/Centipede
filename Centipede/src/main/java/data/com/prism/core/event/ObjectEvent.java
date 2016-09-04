@@ -13,11 +13,6 @@ public class ObjectEvent<V> extends EventObject {
 	 * @param objData 自定义参数
 	 * @param eventType 事件健值
 	 */
-	public ObjectEvent(Object source, int eventType) {
-		super(source);
-		this.eventType = eventType;
-	}
-
 	public ObjectEvent(Object source, V value, int eventType) {
 		super(source);
 		this.value = value;

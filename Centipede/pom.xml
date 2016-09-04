@@ -4,7 +4,7 @@
 	<groupId>pbting.com</groupId>
 	<artifactId>Centipede</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>Centipede</name>
 	<url>http://maven.apache.org</url>
 	<properties>

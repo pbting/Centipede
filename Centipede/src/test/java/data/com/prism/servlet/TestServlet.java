@@ -27,7 +27,7 @@ public class TestServlet extends AbstractServlet{
 	protected void executor(HttpServletRequest request, HttpServletResponse response) {
 		String topic = request.getParameter("topic");
 		String message = request.getParameter("message");
-		String data = ConfigMgr.getDataPath();
+		String data = ConfigMgr.getWebDataPath();
 		String dataDirs = data + File.separator + topic;
 		String fileName = "/user/local/error.log";
 		String fName = fileName.substring(fileName.lastIndexOf("/")+1);

@@ -1,8 +1,6 @@
-package data.com.prism.handler.servlet;
+package data.com.prism.handler.servlet.message;
 
-import java.io.Serializable;
-
-public class RequestMessage implements Serializable{
+public class RequestMessage extends Message{
 
 	/**
 	 * <pre>
@@ -11,19 +9,14 @@ public class RequestMessage implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String topic ;
-	
 	private String fileName ;
 	
-	private String eventId ;
 	public RequestMessage() {
 	}
 	
-	public RequestMessage(String topic, String fileName, String eventId) {
-		super();
-		this.topic = topic;
+	public RequestMessage(String topic, String fileName, int eventId) {
+		super(topic,eventId);
 		this.fileName = fileName;
-		this.eventId = eventId;
 	}
 
 	public String getTopic() {
@@ -40,13 +33,5 @@ public class RequestMessage implements Serializable{
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
-	}
-
-	public String getEventId() {
-		return eventId;
-	}
-
-	public void setEventId(String eventId) {
-		this.eventId = eventId;
 	}
 }

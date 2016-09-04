@@ -75,15 +75,15 @@ public final class ExecutorBuilder {
 	 * @author pbting
 	 *
 	 */
-	public static class FileHanderExecutor {
+	public static class HanderExecutor {
 
-		private FileHanderExecutor() {}
+		private HanderExecutor() {}
 
 		private static Executor executor;
 		
 		public static Executor getExecutor(){
 			if(executor == null){
-				synchronized (FileHanderExecutor.class) {
+				synchronized (HanderExecutor.class) {
 					if(executor == null){
 						executor = new Executor(corePoolSize, maxPoolSize, keepAliveTime,cacheSize, "filehander-executor-prsim");
 					}

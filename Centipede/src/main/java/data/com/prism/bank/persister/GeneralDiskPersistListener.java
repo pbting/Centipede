@@ -39,7 +39,7 @@ public class GeneralDiskPersistListener extends AbstractFilePersistListener {
 		/**
 		 * 这个函数的形参说明如下： 第一个形参：截取的字符数组从StringBuffer中什么位置开始 二：到什么位置结束 三：截取的字符数组存放到哪个字符数组中 四：存放的这个字符数组从什么位置开始存放
 		 */
-		sb.getChars(0, fileChars.length, fileChars, 0);
+		sb.getChars(0, fileChars.length, fileChars,0 );
 
 		return fileChars;
 	}

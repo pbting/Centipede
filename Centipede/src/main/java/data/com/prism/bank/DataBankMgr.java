@@ -6,10 +6,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -34,8 +36,15 @@ import org.apache.commons.logging.LogFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import data.com.prism.cluster.ClusterMgr;
+import data.com.prism.core.Paramter;
 import data.com.prism.handler.FileStatusMgr;
+import data.com.prism.handler.servlet.EventNameId;
+import data.com.prism.handler.servlet.message.DownloadMessage;
+import data.com.prism.handler.servlet.message.TransforMessage;
+import data.com.prism.mgr.ConfigMgr;
 import data.com.prism.util.FileUtil;
+import data.com.prism.util.HttpUtil;
 
 public class DataBankMgr {
 
@@ -283,7 +292,7 @@ public class DataBankMgr {
 			DataOutputStream writer = new DataOutputStream(fos);
 			// 先加密后压缩存储
 			// String inputString = DESUtil.encrypt(new Gson().toJson(message));
-			StringBuffer inputString = new StringBuffer(new Gson().toJson(message));
+			StringBuffer inputString = getMessage(message);
 			int tempLenth = inputString.toString().getBytes("UTF-8").length;
 			ms.setSize(tempLenth);
 			ByteBuffer buffer = ByteBuffer.allocate(tempLenth);
@@ -318,6 +327,63 @@ public class DataBankMgr {
 		} 
 	}
 
+	private static StringBuffer getMessage(Object message) {
+		StringBuffer inputString;
+		if(message instanceof StringBuffer){
+			inputString = (StringBuffer) message;
+		}else{
+			inputString = new StringBuffer(new Gson().toJson(message));
+		}
+		return inputString;
+	}
+	
+	/**
+	 * will upload the data to master
+	 * 1、先将消息存入本地目录，然后发消息通知master下载具体的文件，master 根据具体的topic,和filePath 将下载到的消息进行合并
+	 */
+	public static void transforToMaster(String topic,Object key,Object message, String filePath){
+		try {
+			String tmpFileName = System.currentTimeMillis()+"_"+FileUtil.getSimpleName(filePath);
+			String fileDir = ConfigMgr.getWebDataPath()+ File.separator + topic;
+			File file = new File(fileDir,tmpFileName);
+			FileUtil.checkFile(file);
+			StringBuffer inputString = new StringBuffer(new Gson().toJson(message));
+			int tempLenth = inputString.toString().getBytes("UTF-8").length;
+			ByteBuffer buffer = ByteBuffer.allocate(tempLenth);
+			buffer.put(inputString.toString().getBytes("UTF-8"));
+			buffer.flip();
+			//first pull the message to local disk
+			FileUtil.writeWithTransferTo(file, buffer.array());
+			//second notify master to download the file
+			DownloadMessage downloadMessage = 
+					new DownloadMessage(topic,EventNameId.DOWNLOAD_DATA,key.toString(),tmpFileName, ConfigMgr.getSlave());
+			String param = new Gson().toJson(downloadMessage);
+			Map<String, String> requestParam = new HashMap<String, String>();
+			requestParam.put(Paramter.PARAM, param);
+			requestParam.put(Paramter.EVENT_ID, String.valueOf(EventNameId.DOWNLOAD_DATA));
+			int failCount = ConfigMgr.getReUploadFail();
+			boolean flag = true ;
+			do{
+				String response = HttpUtil.doPost(ClusterMgr.getClusterContiner().getMasterUrl()+"/"+Paramter.URL_masterEventHandler, requestParam, "utf-8");
+				if(response!=null&&HttpUtil.OK == Short.parseShort(response)){
+					data.com.prism.Log.info("topic:"+topic+"消息发送成功,file name:"+tmpFileName+";context path:"+ConfigMgr.getSlave());
+					file.delete();
+					flag = true ;
+				}else{
+					failCount--;
+					flag = false;
+				}
+			}while(!flag&&failCount>0);
+			
+			if(!flag&&failCount<=0){
+				data.com.prism.Log.error(downloadMessage.toString());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			data.com.prism.Log.error(DataBankMgr.class.getName(),e);
+		}
+	}
+	
 	/**
 	 * <pre>
 	 * 获取一个消息，每次都是从上一次消费的地方开始retrieve .如果发现已经到末尾了。则返回null.

@@ -21,14 +21,17 @@ import java.nio.channels.ReadableByteChannel;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
+
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 import data.com.prism.Log;
 import data.com.prism.bank.DataBankMgr;
 
 public final class FileUtil {
 
-	public final static boolean downLoad(String fileUrl, String saveLocalPath, String fileName) {
+	public final static boolean downLoad(String fileUrl, String saveLocalPath, String fileName,boolean isAppend) {
 		try {
 			String urlFileName = fileUrl + "_" + fileName;
 			int byteSum = 0;
@@ -36,7 +39,7 @@ public final class FileUtil {
 			URL url = new URL(urlFileName);
 			URLConnection conn = url.openConnection();
 			InputStream in = conn.getInputStream();// 得到一个网络流，这个网络流就是指向成功连接该站点的一个通道
-			FileOutputStream out = new FileOutputStream(new File(saveLocalPath + fileName));
+			FileOutputStream out = new FileOutputStream(new File(saveLocalPath + fileName),isAppend);
 			byte[] bytes = new byte[1024];
 			while ((byteRead = in.read(bytes)) != -1) {
 				byteSum += byteRead;
@@ -55,6 +58,29 @@ public final class FileUtil {
 		return true;
 	}
 
+	public final static StringBuffer downLoad(String fileUrl) {
+		try {
+			int byteRead = 0;
+			int byteSum = 0 ;
+			URL url = new URL(fileUrl);
+			URLConnection conn = url.openConnection();
+			InputStream in = conn.getInputStream();// 得到一个网络流，这个网络流就是指向成功连接该站点的一个通道
+			ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+			byte[] bytes = new byte[1024];
+			while ((byteRead = in.read(bytes)) != -1) {
+				byteSum += byteRead;
+				out.write(bytes, 0, byteRead);
+			}
+			Log.info("download message ["+fileUrl+"] success:; size is:"+byteSum);
+			return new StringBuffer(new String(out.toByteArray()));
+		} catch (MalformedURLException e) {
+			Log.error("下载文件异常 fileUrl " + fileUrl + ";" + e.getMessage());
+			return null;
+		} catch (IOException e) {
+			Log.error("下载文件异常 fileUrl " + fileUrl + ";" + e.getMessage());
+			return null;
+		}
+	}
 	public final static void checkFile(File file) {
 		try {
 			if (!file.exists()) {

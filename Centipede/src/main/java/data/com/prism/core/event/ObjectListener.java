@@ -4,6 +4,6 @@ import java.util.EventListener;
 
 public interface ObjectListener<V> extends EventListener {
 	
-	public void onEvent(ObjectEvent<?> event);
+	public void onEvent(ObjectEvent<V> event);
 
 }

@@ -12,12 +12,12 @@ import data.com.prism.handler.FileCreateHandler;
 import data.com.prism.handler.FileDeleteHandler;
 import data.com.prism.handler.FileModifyHandler;
 
-public class WatchKeyHander extends Action {
+public class WatchKeyHandler extends Action {
 
 	private WatchKey watchKey;
 	private String listenerPath;
 
-	public WatchKeyHander(WatchKey watchKey, String listenerPath) {
+	public WatchKeyHandler(WatchKey watchKey, String listenerPath) {
 		this.watchKey = watchKey;
 		this.listenerPath = listenerPath;
 	}
@@ -30,13 +30,13 @@ public class WatchKeyHander extends Action {
 				String fileName = event.context().toString();
 				if (event.kind().name().equals(StandardWatchEventKinds.ENTRY_MODIFY.name())) {
 					// 文件更改
-					ExecutorBuilder.FileHanderExecutor.getExecutor().enDefaultQueue(new FileModifyHandler(listenerPath, fileName));
+					ExecutorBuilder.HanderExecutor.getExecutor().enDefaultQueue(new FileModifyHandler(listenerPath, fileName));
 				} else if (event.kind().name().equals(StandardWatchEventKinds.ENTRY_DELETE.name())) {
 					// 文件删除
-					ExecutorBuilder.FileHanderExecutor.getExecutor().enDefaultQueue(new FileDeleteHandler(listenerPath, fileName));
+					ExecutorBuilder.HanderExecutor.getExecutor().enDefaultQueue(new FileDeleteHandler(listenerPath, fileName));
 				} else if (event.kind().name().equals(StandardWatchEventKinds.ENTRY_CREATE.name())) {
 					// 文件创建
-					ExecutorBuilder.FileHanderExecutor.getExecutor().enDefaultQueue(new FileCreateHandler(listenerPath, fileName));
+					ExecutorBuilder.HanderExecutor.getExecutor().enDefaultQueue(new FileCreateHandler(listenerPath, fileName));
 				}
 			}
 		}

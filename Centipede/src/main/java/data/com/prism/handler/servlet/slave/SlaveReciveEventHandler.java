@@ -40,7 +40,7 @@ public class SlaveReciveEventHandler extends AbstractServlet {
 					return;
 				}
 				String realPath = request.getServletContext().getRealPath("");
-				FileUtil.downLoad(url, realPath, "fileName");
+				FileUtil.downLoad(url);
 			}
 			break;
 			case EventNameId.PRE_DOWNLOAD_DATA:

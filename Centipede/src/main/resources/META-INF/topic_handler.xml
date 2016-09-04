@@ -6,6 +6,8 @@
 	<mapper  class="com.road.yishi.log.analysor.AnalilizeLogWebServerMapper" fileName="{1}error.log" topic="webServer" />
 	<reducer class="com.road.yishi.log.analysor.AnalilizeLogWebServerReducer" topic="webServer"/> -->
 	
-	<mapper  class="com.road.yishi.log.analysor.AnalylizLogLocalMapper" fileName="{0}error.log" topic="castleError" />
-	<reducer class="com.road.yishi.log.analysor.AnalylizLogLocalReducer" topic="castleError"/>
+	<!-- <mapper  class="com.road.yishi.log.analysor.AnalylizLogLocalMapper" fileName="{0}error.log" topic="castleError" />
+	<reducer class="com.road.yishi.log.analysor.AnalylizLogLocalReducer" topic="castleError"/> -->
+	<mapper class="data.com.prism.analysor.test.statistics.StatisticCountOneMapper" fileName="{0}demo.txt" topic="LuckyAlph"/>
+	<reducer class="data.com.prism.analysor.test.statistics.StatisticCountOneReducer" topic="LuckyAlph"/>
 </topicHandlers>

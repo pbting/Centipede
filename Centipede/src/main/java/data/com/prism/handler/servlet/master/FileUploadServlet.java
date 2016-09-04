@@ -39,7 +39,7 @@ public class FileUploadServlet extends AbstractServlet {
 
 	@Override
 	protected void executor(HttpServletRequest request, HttpServletResponse response) {
-		String filePath = ConfigMgr.getDataPath();
+		String filePath = ConfigMgr.getWebDataPath();
 		File uploadFile = new File(filePath);
 		FileUtil.checkFile(uploadFile);
 

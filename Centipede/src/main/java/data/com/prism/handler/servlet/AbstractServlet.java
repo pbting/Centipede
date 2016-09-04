@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import data.com.prism.handler.servlet.message.Message;
+
 public abstract class AbstractServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

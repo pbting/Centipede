@@ -1,6 +1,8 @@
 package data.com.prism.cluster;
 
+import java.util.Collections;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 
@@ -14,15 +16,15 @@ public class ClusterContiner {
 	
 	private String masterUrl;
 	
-	private Set<String> salvesUrl ;
+	private Set<String> slavesUrl ;
 	
 	public ClusterContiner() {
 	}
 	
-	public ClusterContiner(String masterUrl, Set<String> salvesUrl,String role) {
+	public ClusterContiner(String masterUrl, Set<String> slavesUrl,String role) {
 		super();
 		this.masterUrl = masterUrl;
-		this.salvesUrl = salvesUrl;
+		this.slavesUrl = slavesUrl;
 		this.role = role ;
 	}
 	
@@ -43,10 +45,17 @@ public class ClusterContiner {
 	}
 
 	public Set<String> getSalvesUrl() {
-		return salvesUrl;
+		return Collections.unmodifiableSet(slavesUrl);
 	}
 
-	public void setSalvesUrl(Set<String> salvesUrl) {
-		this.salvesUrl = salvesUrl;
+	public void addSalveUrl(String salveUrl) {
+		if(this.slavesUrl == null){
+			synchronized (ClusterContiner.class) {
+				if(this.slavesUrl==null){
+					this.slavesUrl = Collections.synchronizedSet(new TreeSet<String>());
+				}
+			}
+		}
+		this.slavesUrl.add(salveUrl);
 	}
 }

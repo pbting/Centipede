@@ -1,4 +1,4 @@
-package data.com.prism.handler.servlet;
+package data.com.prism.handler.servlet.message;
 
 import java.io.Serializable;
 
@@ -10,15 +10,15 @@ public class Message implements Serializable{
 	 * </pre>
 	 */
 	private static final long serialVersionUID = 1L;
-	private String topic;
-	private String message;
+	protected String topic;
+	protected int eventId ;
 	public Message() {
 	}
 	
-	public Message(String topic, String message) {
+	public Message(String topic,int eventId) {
 		super();
 		this.topic = topic;
-		this.message = message;
+		this.eventId = eventId;
 	}
 
 	public String getTopic() {
@@ -27,10 +27,11 @@ public class Message implements Serializable{
 	public void setTopic(String topic) {
 		this.topic = topic;
 	}
-	public String getMessage() {
-		return message;
+	public int getEventId() {
+		return eventId;
 	}
-	public void setMessage(String message) {
-		this.message = message;
+
+	public void setEventId(int eventId) {
+		this.eventId = eventId;
 	}
 }

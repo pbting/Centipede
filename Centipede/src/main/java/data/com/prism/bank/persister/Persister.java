@@ -1,8 +1,10 @@
 package data.com.prism.bank.persister;
 
 import data.com.prism.bank.DataBankMgr;
+import data.com.prism.core.Paramter;
 import data.com.prism.core.quence.Action;
 import data.com.prism.exception.TaskExecuteException;
+import data.com.prism.mgr.ConfigMgr;
 
 public class Persister extends Action{
 	private String topic;
@@ -20,6 +22,11 @@ public class Persister extends Action{
 
 	@Override
 	public long execute() throws TaskExecuteException {
+		String role = ConfigMgr.getRole();
+		if(Paramter.ROLE_SLAVE.equals(role.trim())){
+			DataBankMgr.transforToMaster(topic, key, message, filePath);
+			return 1 ;
+		}
 		DataBankMgr.store(topic,key,message, filePath,type);
 		return 1 ;
 	}

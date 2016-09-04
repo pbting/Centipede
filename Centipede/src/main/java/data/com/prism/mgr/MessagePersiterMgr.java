@@ -16,14 +16,25 @@ public class MessagePersiterMgr {
 	
 	private static final Map<String,FilePersistListener> topicFilePMap = new ConcurrentHashMap<String,FilePersistListener>();
 	
-	public static void init(TopicPath...topicPaths){
+	private static boolean registerTaskFlag = false ;
+	
+	public static boolean init(TopicPath...topicPaths){
 		for(TopicPath tp : topicPaths){
 			DataBankMgr.init(tp.getTopic(),tp.getPath());
 			FilePersistListener fp = new GeneralDiskPersistListener();
 			fp.config(tp.getTopic(), tp.getPath());
 			topicFilePMap.put(tp.getTopic(),fp);
 		}
-		DataBankMgr.registerTask();
+		if(registerTaskFlag == false){
+			DataBankMgr.registerTask();
+			registerTaskFlag = true ;
+		}
+		return true ;
+	}
+	
+	public static FilePersistListener getFilePersistListener(String topic){
+		
+		return topicFilePMap.get(topic);
 	}
 	
 	public static void persister(String topic,Object key,Object value,short type){

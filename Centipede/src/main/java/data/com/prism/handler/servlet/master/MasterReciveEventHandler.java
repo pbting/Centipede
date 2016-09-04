@@ -4,12 +4,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import data.com.prism.core.EventObjectBuilder;
+import data.com.prism.core.Paramter;
 import data.com.prism.handler.servlet.AbstractServlet;
 import data.com.prism.handler.servlet.EventNameId;
-import data.com.prism.handler.servlet.RequestMessage;
+import data.com.prism.handler.servlet.message.DownloadMessage;
 import data.com.prism.util.StringUtil;
 
 @WebServlet(name = "masterEventHandler", asyncSupported = true, urlPatterns = { "/masterEventHandler.do" })
@@ -23,21 +27,21 @@ public class MasterReciveEventHandler extends AbstractServlet {
 
 	@Override
 	protected void executor(HttpServletRequest request, HttpServletResponse response) {
-		String param = request.getParameter("param");
+		String eventId = request.getParameter(Paramter.EVENT_ID);
+		if(StringUtils.isEmpty(eventId)&&!StringUtil.isNumeric(eventId)){
+			return ;
+		}
+		
+		short eventIdS = Short.parseShort(eventId);
+		String param = request.getParameter(Paramter.PARAM);
 		if (!StringUtil.isEmpty(param)) {
-			TypeToken<RequestMessage> typeToken = new TypeToken<RequestMessage>(){};
-			RequestMessage requestMessage = new Gson().fromJson(param,typeToken.getType());
-			if (checkParam(requestMessage.getEventId(), requestMessage.getTopic(), requestMessage.getFileName())) {
-				int eventIdInt = Integer.parseInt(requestMessage.getEventId());
-				switch (eventIdInt) {
-				case EventNameId.FILE_MODIFY:// master 接收到slave 发送过来的日志发生更改的消息
-				{
-
-				}
-					break;
-				default:
-					break;
-				}
+			switch (eventIdS) {
+			case EventNameId.DOWNLOAD_DATA://master download
+			{
+				DownloadMessage downloadMessage = new Gson().fromJson(param,new TypeToken<DownloadMessage>(){}.getType());
+				EventObjectBuilder.getDownloadDataEvent().notifyDowload(downloadMessage);
+			}
+			break;
 			}
 		}
 	}
@@ -47,12 +51,10 @@ public class MasterReciveEventHandler extends AbstractServlet {
 		return true;
 	}
 
-	private boolean checkParam(String eventId, String topic, String fileName) {
+	private boolean checkParam(int eventId, String topic) {
 		boolean flag = true;
-		flag |= StringUtil.isEmpty(eventId);
+		flag |= eventId > 0;
 		flag |= StringUtil.isEmpty(topic);
-		flag |= StringUtil.isEmpty(fileName);
-
 		return flag;
 	}
 }
